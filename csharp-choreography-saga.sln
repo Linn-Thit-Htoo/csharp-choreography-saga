@@ -1,15 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.12.35707.178 d17.12
+VisualStudioVersion = 17.12.35707.178
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "csharp-choreography-saga.OrderMicroservice", "csharp-choreography-saga.OrderMicroservice\csharp-choreography-saga.OrderMicroservice.csproj", "{7910FC7B-365E-4B0A-8774-D2D08CD5A232}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "csharp-choreography-saga.OrderMicroservice", "csharp-choreography-saga.OrderMicroservice\csharp-choreography-saga.OrderMicroservice.csproj", "{7910FC7B-365E-4B0A-8774-D2D08CD5A232}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "csharp-choreography-saga.StockMicroservice", "csharp-choreography-saga.StockMicroservice\csharp-choreography-saga.StockMicroservice.csproj", "{DB8B9B6F-9D86-4C90-9331-7D64E5765900}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "csharp-choreography-saga,PaymentMicroservice", "csharp-choreography-saga,PaymentMicroservice\csharp-choreography-saga,PaymentMicroservice.csproj", "{881286FB-8C51-4385-A3A4-2FCDCF3544F1}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "csharp-choreography-saga.ApiGateway", "csharp-choreography-saga.ApiGateway\csharp-choreography-saga.ApiGateway.csproj", "{1AB37164-6993-4EF1-A2E2-A91C2607CC95}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "csharp-choreography-saga.StockMicroservice", "csharp-choreography-saga.StockMicroservice\csharp-choreography-saga.StockMicroservice.csproj", "{DB8B9B6F-9D86-4C90-9331-7D64E5765900}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -25,14 +21,6 @@ Global
 		{DB8B9B6F-9D86-4C90-9331-7D64E5765900}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DB8B9B6F-9D86-4C90-9331-7D64E5765900}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DB8B9B6F-9D86-4C90-9331-7D64E5765900}.Release|Any CPU.Build.0 = Release|Any CPU
-		{881286FB-8C51-4385-A3A4-2FCDCF3544F1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{881286FB-8C51-4385-A3A4-2FCDCF3544F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{881286FB-8C51-4385-A3A4-2FCDCF3544F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{881286FB-8C51-4385-A3A4-2FCDCF3544F1}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1AB37164-6993-4EF1-A2E2-A91C2607CC95}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1AB37164-6993-4EF1-A2E2-A91C2607CC95}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1AB37164-6993-4EF1-A2E2-A91C2607CC95}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1AB37164-6993-4EF1-A2E2-A91C2607CC95}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,6 +1,0 @@
-@csharp_choreography_saga_PaymentMicroservice_HostAddress = http://localhost:5226
-
-GET {{csharp_choreography_saga_PaymentMicroservice_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###
