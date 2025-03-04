@@ -1,9 +1,11 @@
-﻿using csharp_choreography_saga.OrderMicroservice.Entities;
+﻿using csharp_choreography_saga.OrderMicroservice.Configurations;
+using csharp_choreography_saga.OrderMicroservice.Entities;
 using csharp_choreography_saga.OrderMicroservice.Models;
 using csharp_choreography_saga.OrderMicroservice.Persistence.Base;
 using Dapper;
 using Microsoft.AspNetCore.Mvc.TagHelpers;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Npgsql;
 
 namespace csharp_choreography_saga.OrderMicroservice.Services.Order
@@ -13,9 +15,11 @@ namespace csharp_choreography_saga.OrderMicroservice.Services.Order
         private readonly AppDbContext _appDbContext;
         private readonly ILogger<OrderService> _logger;
         private readonly IRepositoryBase<TblOrder> _orderRepository;
+        private readonly AppSetting _appSetting;
 
-        public OrderService(AppDbContext appDbContext, ILogger<OrderService> logger, IRepositoryBase<TblOrder> orderRepository)
+        public OrderService(IOptions<AppSetting> options, AppDbContext appDbContext, ILogger<OrderService> logger, IRepositoryBase<TblOrder> orderRepository)
         {
+            _appSetting = options.Value;
             _appDbContext = appDbContext;
             _logger = logger;
             _orderRepository = orderRepository;
@@ -61,7 +65,7 @@ namespace csharp_choreography_saga.OrderMicroservice.Services.Order
                 {
                     compensateOrderEvent.OrderId
                 };
-                var db = new NpgsqlConnection("User Id=postgres.vjfbqbyjnswwbihhbshi;Password=IdeaNext@123!;Server=aws-0-ap-southeast-1.pooler.supabase.com;Port=6543;Database=postgres;");
+                var db = new NpgsqlConnection(_appSetting.ConnectionStrings.DbConnection);
                 int result = await db.ExecuteAsync(query, parameters);
 
                 //var order = await _orderRepository
