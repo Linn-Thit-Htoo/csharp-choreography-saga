@@ -7,8 +7,6 @@ namespace csharp_choreography_saga.OrderMicroservice.Features.CreateOrder
     {
         public Guid UserId { get; set; }
 
-        public Guid InvoiceNo { get; set; }
-
         public double GrandTotal { get; set; }
 
         public List<CreateOrderDetailCommand> OrderDetails { get; set; }

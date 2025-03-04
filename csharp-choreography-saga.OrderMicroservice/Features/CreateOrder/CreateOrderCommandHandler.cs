@@ -1,6 +1,8 @@
 ﻿using csharp_choreography_saga.OrderMicroservice.Constants;
 using csharp_choreography_saga.OrderMicroservice.Entities;
+using csharp_choreography_saga.OrderMicroservice.Models;
 using csharp_choreography_saga.OrderMicroservice.Persistence.Base;
+using csharp_choreography_saga.OrderMicroservice.Services.RabbitMQ;
 using csharp_choreography_saga.OrderMicroservice.Utils;
 using MediatR;
 using System.Data.SqlTypes;
@@ -12,11 +14,13 @@ namespace csharp_choreography_saga.OrderMicroservice.Features.CreateOrder
     {
         private readonly IRepositoryBase<TblOrder> _orderRepository;
         private readonly IRepositoryBase<TblOrderDetail> _orderDetailRepository;
+        private readonly IBus _bus;
 
-        public CreateOrderCommandHandler(IRepositoryBase<TblOrder> orderRepository, IRepositoryBase<TblOrderDetail> orderDetailRepository)
+        public CreateOrderCommandHandler(IRepositoryBase<TblOrder> orderRepository, IRepositoryBase<TblOrderDetail> orderDetailRepository, IBus bus)
         {
             _orderRepository = orderRepository;
             _orderDetailRepository = orderDetailRepository;
+            _bus = bus;
         }
 
         public async Task<Result<CreateOrderResponse>> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
@@ -57,6 +61,20 @@ namespace csharp_choreography_saga.OrderMicroservice.Features.CreateOrder
             await _orderDetailRepository.SaveChangesAsync(cancellationToken);
 
             scope.Complete();
+
+            OrderCreatedEvent orderCreatedEvent = new()
+            {
+                OrderId = order.OrderId,
+                OrderDetails = request.OrderDetails!.Select(x => new OrderDetail()
+                {
+                    ProductId = x.ProductId,
+                    InvoiceNo = order.InvoiceNo,
+                    SubTotal = x.SubTotal,
+                    TotalItems = x.TotalItems
+                }).ToList()
+            };
+
+            _bus.Send("DirectExchange", "OrderQueue", "orderdirect", orderCreatedEvent);
 
             var model = new CreateOrderResponse() { OrderId = order.OrderId };
             result = Result<CreateOrderResponse>.Success(model);

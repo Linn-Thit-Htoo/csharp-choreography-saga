@@ -30,7 +30,7 @@ namespace csharp_choreography_saga.StockMicroservice.Dependencies
                             .SelectMany(ms => ms.Value!.Errors.Select(e => e.ErrorMessage))
                             .ToList();
 
-                        var errorMessage = string.Join("; ", errors);
+                        var errorMessage = string.Join(" ", errors);
                         var result = Result<object>.Fail(
                             errorMessage
                         );

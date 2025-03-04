@@ -1,6 +1,8 @@
 ﻿using csharp_choreography_saga.OrderMicroservice.Configurations;
 using csharp_choreography_saga.OrderMicroservice.Entities;
 using csharp_choreography_saga.OrderMicroservice.Persistence.Base;
+using csharp_choreography_saga.OrderMicroservice.Services.Order;
+using csharp_choreography_saga.OrderMicroservice.Services.RabbitMQ;
 using csharp_choreography_saga.OrderMicroservice.Utils;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -52,6 +54,9 @@ namespace csharp_choreography_saga.OrderMicroservice.Dependencies
             });
 
             builder.Services.AddScoped(typeof(IRepositoryBase<>), typeof(RepositoryBase<>));
+            builder.Services.AddHostedService<RabbitMQService>();
+            builder.Services.AddSingleton<IBus, RabbitBus>();
+            builder.Services.AddScoped<IOrderService, OrderService>();
 
             return services;
         }
