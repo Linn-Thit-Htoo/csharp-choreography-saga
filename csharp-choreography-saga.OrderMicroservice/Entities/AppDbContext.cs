@@ -714,6 +714,7 @@ public partial class AppDbContext : DbContext
                 .HasDefaultValueSql("now()")
                 .HasColumnType("timestamp without time zone");
             entity.Property(e => e.InvoiceNo).HasDefaultValueSql("gen_random_uuid()");
+            entity.Property(e => e.IsDeleted).HasDefaultValue(false);
             entity.Property(e => e.Status)
                 .HasDefaultValueSql("'Pending'::character varying")
                 .HasColumnType("character varying");
@@ -721,7 +722,7 @@ public partial class AppDbContext : DbContext
 
             entity.HasOne(d => d.User).WithMany(p => p.TblOrders)
                 .HasForeignKey(d => d.UserId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
+                .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("Tbl_Order_UserId_fkey");
         });
 
@@ -733,6 +734,7 @@ public partial class AppDbContext : DbContext
 
             entity.Property(e => e.Id).HasDefaultValueSql("gen_random_uuid()");
             entity.Property(e => e.InvoiceNo).HasDefaultValueSql("gen_random_uuid()");
+            entity.Property(e => e.IsDeleted).HasDefaultValue(false);
             entity.Property(e => e.OrderId).HasDefaultValueSql("gen_random_uuid()");
             entity.Property(e => e.ProductId).HasDefaultValueSql("gen_random_uuid()");
 
@@ -740,11 +742,6 @@ public partial class AppDbContext : DbContext
                 .HasForeignKey(d => d.OrderId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("Tbl_OrderDetail_OrderId_fkey");
-
-            entity.HasOne(d => d.Product).WithMany(p => p.TblOrderDetails)
-                .HasForeignKey(d => d.ProductId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("Tbl_OrderDetail_ProductId_fkey");
         });
 
         modelBuilder.Entity<TblProduct>(entity =>

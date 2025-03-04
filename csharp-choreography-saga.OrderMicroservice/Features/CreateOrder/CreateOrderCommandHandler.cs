@@ -74,7 +74,7 @@ namespace csharp_choreography_saga.OrderMicroservice.Features.CreateOrder
                 }).ToList()
             };
 
-            _bus.Send("DirectExchange", "OrderQueue", "orderdirect", orderCreatedEvent);
+            _bus.Send("DirectExchange", "StockQueue", "orderdirect", orderCreatedEvent);
 
             var model = new CreateOrderResponse() { OrderId = order.OrderId };
             result = Result<CreateOrderResponse>.Success(model);

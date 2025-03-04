@@ -46,6 +46,7 @@ namespace csharp_choreography_saga.StockMicroservice.Dependencies
             builder.Services.AddDbContext<AppDbContext>((serviceProvider, opt) =>
             {
                 opt.UseNpgsql(builder.Configuration.GetConnectionString("DbConnection"));
+                opt.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
             });
 
             builder.Services.AddScoped(typeof(IRepositoryBase<>), typeof(RepositoryBase<>));

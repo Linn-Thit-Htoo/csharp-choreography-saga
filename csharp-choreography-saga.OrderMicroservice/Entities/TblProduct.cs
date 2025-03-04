@@ -15,7 +15,5 @@ public partial class TblProduct
 
     public bool IsDeleted { get; set; }
 
-    public virtual ICollection<TblOrderDetail> TblOrderDetails { get; set; } = new List<TblOrderDetail>();
-
     public virtual ICollection<TblStock> TblStocks { get; set; } = new List<TblStock>();
 }

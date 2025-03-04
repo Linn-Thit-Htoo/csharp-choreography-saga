@@ -17,6 +17,8 @@ public partial class TblOrder
 
     public DateTime CreatedAt { get; set; }
 
+    public bool? IsDeleted { get; set; }
+
     public virtual ICollection<TblOrderDetail> TblOrderDetails { get; set; } = new List<TblOrderDetail>();
 
     public virtual TblUser User { get; set; } = null!;

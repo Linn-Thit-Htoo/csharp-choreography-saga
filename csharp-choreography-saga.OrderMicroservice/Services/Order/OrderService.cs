@@ -1,35 +1,50 @@
 ﻿using csharp_choreography_saga.OrderMicroservice.Entities;
 using csharp_choreography_saga.OrderMicroservice.Models;
 using csharp_choreography_saga.OrderMicroservice.Persistence.Base;
+using Microsoft.AspNetCore.Mvc.TagHelpers;
 using Microsoft.EntityFrameworkCore;
 
 namespace csharp_choreography_saga.OrderMicroservice.Services.Order
 {
     public class OrderService : IOrderService
     {
-        private readonly IRepositoryBase<TblOrder> _orderRepository;
-        private readonly IRepositoryBase<TblOrderDetail> _orderDetailRepository;
+        private readonly AppDbContext _appDbContext;
+        private readonly ILogger<OrderService> _logger;
 
-        public OrderService(IRepositoryBase<TblOrder> orderRepository, IRepositoryBase<TblOrderDetail> orderDetailRepository)
+        public OrderService(AppDbContext appDbContext, ILogger<OrderService> logger)
         {
-            _orderRepository = orderRepository;
-            _orderDetailRepository = orderDetailRepository;
+            _appDbContext = appDbContext;
+            _logger = logger;
         }
 
         public async Task CompensateOrderAsync(CompensateOrderEvent compensateOrderEvent)
         {
-            var order = await _orderRepository.GetByCondition(x => x.OrderId == compensateOrderEvent.OrderId)
-                .FirstOrDefaultAsync();
-            var orderLst = await _orderDetailRepository.GetByCondition(x => x.OrderId == compensateOrderEvent.OrderId)
-                .ToListAsync();
-
-            if (order is not null && orderLst is not null && orderLst.Count > 0)
+            using var transaction = await _appDbContext.Database.BeginTransactionAsync();
+            try
             {
-                _orderRepository.Delete(order);
-                _orderDetailRepository.Delete(orderLst);
+                var order = await _appDbContext.TblOrders
+        .Include(x => x.TblOrderDetails)
+        .SingleOrDefaultAsync(x => x.OrderId == compensateOrderEvent.OrderId)
+        ?? throw new Exception("Order not found.");
 
-                await _orderRepository.SaveChangesAsync();
-                await _orderDetailRepository.SaveChangesAsync();
+                foreach (var item in order.TblOrderDetails)
+                {
+                    item.IsDeleted = true;
+                    _appDbContext.TblOrderDetails.Update(item);
+                }
+
+                order.IsDeleted = true;
+                _appDbContext.TblOrders.Update(order);
+
+                await _appDbContext.SaveChangesAsync();
+                await transaction.CommitAsync();
+
+                _logger.LogInformation("Compensating Done!");
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+                throw;
             }
         }
     }

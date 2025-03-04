@@ -17,7 +17,7 @@ public partial class TblOrderDetail
 
     public double SubTotal { get; set; }
 
-    public virtual TblOrder Order { get; set; } = null!;
+    public bool? IsDeleted { get; set; }
 
-    public virtual TblProduct Product { get; set; } = null!;
+    public virtual TblOrder Order { get; set; } = null!;
 }

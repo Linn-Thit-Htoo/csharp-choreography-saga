@@ -46,6 +46,7 @@ namespace csharp_choreography_saga.OrderMicroservice.Dependencies
             builder.Services.AddDbContext<AppDbContext>((serviceProvider, opt) =>
             {
                 opt.UseNpgsql(builder.Configuration.GetConnectionString("DbConnection"));
+                opt.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
             });
 
             builder.Services.AddMediatR(config =>
@@ -53,7 +54,7 @@ namespace csharp_choreography_saga.OrderMicroservice.Dependencies
                 config.RegisterServicesFromAssembly(typeof(DependencyInjectionExtensions).Assembly);
             });
 
-            builder.Services.AddScoped(typeof(IRepositoryBase<>), typeof(RepositoryBase<>));
+            builder.Services.AddTransient(typeof(IRepositoryBase<>), typeof(RepositoryBase<>));
             builder.Services.AddHostedService<RabbitMQService>();
             builder.Services.AddSingleton<IBus, RabbitBus>();
             builder.Services.AddScoped<IOrderService, OrderService>();
