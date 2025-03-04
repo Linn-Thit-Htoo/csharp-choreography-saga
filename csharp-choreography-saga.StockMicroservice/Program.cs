@@ -1,4 +1,6 @@
 
+using csharp_choreography_saga.StockMicroservice.Dependencies;
+
 namespace csharp_choreography_saga.StockMicroservice
 {
     public class Program
@@ -9,10 +11,11 @@ namespace csharp_choreography_saga.StockMicroservice
 
             // Add services to the container.
 
-            builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+
+            builder.Services.AddDependencie(builder);
 
             var app = builder.Build();
 

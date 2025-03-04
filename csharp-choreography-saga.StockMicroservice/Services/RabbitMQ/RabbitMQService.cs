@@ -1,6 +1,9 @@
 ﻿using csharp_choreography_saga.StockMicroservice.Configurations;
+using csharp_choreography_saga.StockMicroservice.Models;
+using csharp_choreography_saga.StockMicroservice.Services.Stock;
 using Microsoft.AspNetCore.Connections;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System.Text;
@@ -39,7 +42,19 @@ namespace csharp_choreography_saga.StockMicroservice.Services.RabbitMQ
 
                     if (ea.RoutingKey.Equals("orderdirect"))
                     {
+                        var requestModel = JsonConvert.DeserializeObject<OrderCreatedEvent>(content);
+                        var scope = _scopeFactory.CreateScope();
+                        var stockService = scope.ServiceProvider.GetRequiredService<IStockService>();
+                        var bus = scope.ServiceProvider.GetRequiredService<IBus>();
 
+                        bool isStockReductionSuccessful = await stockService.ReduceStockAsync(requestModel!);
+
+                        if (!isStockReductionSuccessful)
+                        {
+                            // publish to compensate the order
+                            CompensateOrderEvent compensateOrderEvent = new() { OrderId = requestModel!.OrderId };
+                            bus.Send("DirectExchange", "OrderQueue", "orderfaildirect",compensateOrderEvent);
+                        }
                     }
 
                     channel.BasicAck(ea.DeliveryTag, false);
