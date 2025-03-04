@@ -1,8 +1,10 @@
 ﻿using csharp_choreography_saga.OrderMicroservice.Entities;
 using csharp_choreography_saga.OrderMicroservice.Models;
 using csharp_choreography_saga.OrderMicroservice.Persistence.Base;
+using Dapper;
 using Microsoft.AspNetCore.Mvc.TagHelpers;
 using Microsoft.EntityFrameworkCore;
+using Npgsql;
 
 namespace csharp_choreography_saga.OrderMicroservice.Services.Order
 {
@@ -10,11 +12,13 @@ namespace csharp_choreography_saga.OrderMicroservice.Services.Order
     {
         private readonly AppDbContext _appDbContext;
         private readonly ILogger<OrderService> _logger;
+        private readonly IRepositoryBase<TblOrder> _orderRepository;
 
-        public OrderService(AppDbContext appDbContext, ILogger<OrderService> logger)
+        public OrderService(AppDbContext appDbContext, ILogger<OrderService> logger, IRepositoryBase<TblOrder> orderRepository)
         {
             _appDbContext = appDbContext;
             _logger = logger;
+            _orderRepository = orderRepository;
         }
 
         public async Task CompensateOrderAsync(CompensateOrderEvent compensateOrderEvent)
@@ -52,17 +56,27 @@ namespace csharp_choreography_saga.OrderMicroservice.Services.Order
         {
             try
             {
-                var order = await _appDbContext.TblOrders
-        .SingleOrDefaultAsync(x => x.OrderId == compensateOrderEvent.OrderId)
-        ?? throw new Exception("Order not found.");
+                string query = @"DELETE FROM ""Tbl_Order"" WHERE ""OrderId"" = @OrderId";
+                var parameters = new
+                {
+                    compensateOrderEvent.OrderId
+                };
+                var db = new NpgsqlConnection("User Id=postgres.vjfbqbyjnswwbihhbshi;Password=IdeaNext@123!;Server=aws-0-ap-southeast-1.pooler.supabase.com;Port=6543;Database=postgres;");
+                int result = await db.ExecuteAsync(query, parameters);
 
-                _appDbContext.TblOrders.Remove(order);
-                await _appDbContext.SaveChangesAsync();
+                //var order = await _orderRepository
+                //    .GetByCondition(x => x.OrderId == compensateOrderEvent.OrderId)
+                //    .SingleOrDefaultAsync()
+                //    ?? throw new Exception("Order not found.");
+
+                //_orderRepository.Delete(order);
+                //await _orderRepository.SaveChangesAsync();
 
                 _logger.LogInformation("Compensating Done!");
             }
             catch (Exception ex)
             {
+                _logger.LogError($"Error Rollback Order: {ex.ToString()}");
                 throw;
             }
         }
