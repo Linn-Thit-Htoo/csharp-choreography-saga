@@ -740,7 +740,6 @@ public partial class AppDbContext : DbContext
 
             entity.HasOne(d => d.Order).WithMany(p => p.TblOrderDetails)
                 .HasForeignKey(d => d.OrderId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("Tbl_OrderDetail_OrderId_fkey");
         });
 

@@ -47,5 +47,24 @@ namespace csharp_choreography_saga.OrderMicroservice.Services.Order
                 throw;
             }
         }
+
+        public async Task CompensateOrderAsyncV1(CompensateOrderEvent compensateOrderEvent)
+        {
+            try
+            {
+                var order = await _appDbContext.TblOrders
+        .SingleOrDefaultAsync(x => x.OrderId == compensateOrderEvent.OrderId)
+        ?? throw new Exception("Order not found.");
+
+                _appDbContext.TblOrders.Remove(order);
+                await _appDbContext.SaveChangesAsync();
+
+                _logger.LogInformation("Compensating Done!");
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
     }
 }

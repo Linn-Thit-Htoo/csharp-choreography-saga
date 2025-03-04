@@ -47,7 +47,7 @@ namespace csharp_choreography_saga.OrderMicroservice.Services.RabbitMQ
                         var scope = _scopeFactory.CreateScope();
                         var orderService = scope.ServiceProvider.GetRequiredService<IOrderService>();
 
-                        await orderService.CompensateOrderAsync(requestModel!);
+                        await orderService.CompensateOrderAsyncV1(requestModel!);
                     }
 
                     channel.BasicAck(ea.DeliveryTag, false);
