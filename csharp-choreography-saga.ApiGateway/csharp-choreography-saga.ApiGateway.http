@@ -1,0 +1,6 @@
+@csharp_choreography_saga.ApiGateway_HostAddress = http://localhost:5245
+
+GET {{csharp_choreography_saga.ApiGateway_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
