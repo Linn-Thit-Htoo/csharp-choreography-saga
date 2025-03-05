@@ -1,0 +1,19 @@
+{
+  "GlobalConfiguration": {
+    "BaseUrl": "https://localhost:7128"
+  },
+  "Routes": [
+    {
+      "UpstreamPathTemplate": "/api/gateway/Order/{everything}",
+      "UpstreamHttpMethod": [ "POST" ],
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7022
+        }
+      ],
+      "DownstreamPathTemplate": "/api/Order/CreateOrder",
+      "DownstreamScheme": "https"
+    }
+  ]
+}
