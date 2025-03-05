@@ -1,6 +1,5 @@
 ﻿using csharp_choreography_saga.OrderMicroservice.Features.CreateOrder;
 using MediatR;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace csharp_choreography_saga.OrderMicroservice.Features.Core
