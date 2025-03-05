@@ -7,81 +7,80 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Npgsql;
 
-namespace csharp_choreography_saga.OrderMicroservice.Services.Order
+namespace csharp_choreography_saga.OrderMicroservice.Services.Order;
+
+public class OrderService : IOrderService
 {
-    public class OrderService : IOrderService
+    private readonly AppDbContext _appDbContext;
+    private readonly ILogger<OrderService> _logger;
+    private readonly IRepositoryBase<TblOrder> _orderRepository;
+    private readonly AppSetting _appSetting;
+
+    public OrderService(IOptions<AppSetting> options, AppDbContext appDbContext, ILogger<OrderService> logger, IRepositoryBase<TblOrder> orderRepository)
     {
-        private readonly AppDbContext _appDbContext;
-        private readonly ILogger<OrderService> _logger;
-        private readonly IRepositoryBase<TblOrder> _orderRepository;
-        private readonly AppSetting _appSetting;
+        _appSetting = options.Value;
+        _appDbContext = appDbContext;
+        _logger = logger;
+        _orderRepository = orderRepository;
+    }
 
-        public OrderService(IOptions<AppSetting> options, AppDbContext appDbContext, ILogger<OrderService> logger, IRepositoryBase<TblOrder> orderRepository)
+    public async Task CompensateOrderAsync(CompensateOrderEvent compensateOrderEvent)
+    {
+        using var transaction = await _appDbContext.Database.BeginTransactionAsync();
+        try
         {
-            _appSetting = options.Value;
-            _appDbContext = appDbContext;
-            _logger = logger;
-            _orderRepository = orderRepository;
+            var order = await _appDbContext.TblOrders
+    .Include(x => x.TblOrderDetails)
+    .SingleOrDefaultAsync(x => x.OrderId == compensateOrderEvent.OrderId)
+    ?? throw new Exception("Order not found.");
+
+            foreach (var item in order.TblOrderDetails)
+            {
+                item.IsDeleted = true;
+                _appDbContext.TblOrderDetails.Update(item);
+            }
+
+            order.IsDeleted = true;
+            _appDbContext.TblOrders.Update(order);
+
+            await _appDbContext.SaveChangesAsync();
+            await transaction.CommitAsync();
+
+            _logger.LogInformation("Compensating Done!");
         }
-
-        public async Task CompensateOrderAsync(CompensateOrderEvent compensateOrderEvent)
+        catch (Exception ex)
         {
-            using var transaction = await _appDbContext.Database.BeginTransactionAsync();
-            try
-            {
-                var order = await _appDbContext.TblOrders
-        .Include(x => x.TblOrderDetails)
-        .SingleOrDefaultAsync(x => x.OrderId == compensateOrderEvent.OrderId)
-        ?? throw new Exception("Order not found.");
-
-                foreach (var item in order.TblOrderDetails)
-                {
-                    item.IsDeleted = true;
-                    _appDbContext.TblOrderDetails.Update(item);
-                }
-
-                order.IsDeleted = true;
-                _appDbContext.TblOrders.Update(order);
-
-                await _appDbContext.SaveChangesAsync();
-                await transaction.CommitAsync();
-
-                _logger.LogInformation("Compensating Done!");
-            }
-            catch (Exception ex)
-            {
-                await transaction.RollbackAsync();
-                throw;
-            }
+            await transaction.RollbackAsync();
+            throw;
         }
+    }
 
-        public async Task CompensateOrderAsyncV1(CompensateOrderEvent compensateOrderEvent)
+    public async Task CompensateOrderAsyncV1(CompensateOrderEvent compensateOrderEvent)
+    {
+        try
         {
-            try
+            string query = @"DELETE FROM ""Tbl_Order"" WHERE ""OrderId"" = @OrderId";
+            var parameters = new
             {
-                string query = @"DELETE FROM ""Tbl_Order"" WHERE ""OrderId"" = @OrderId";
-                var parameters = new
-                {
-                    compensateOrderEvent.OrderId
-                };
-                var db = new NpgsqlConnection(_appSetting.ConnectionStrings.DbConnection);
-                int result = await db.ExecuteAsync(query, parameters);
+                compensateOrderEvent.OrderId
+            };
+            var db = new NpgsqlConnection(_appSetting.ConnectionStrings.DbConnection);
+            int result = await db.ExecuteAsync(query, parameters);
 
-                //var order = await _orderRepository
-                //    .GetByCondition(x => x.OrderId == compensateOrderEvent.OrderId)
-                //    .SingleOrDefaultAsync()
-                //    ?? throw new Exception("Order not found.");
+            //var order = await _orderRepository
+            //    .GetByCondition(x => x.OrderId == compensateOrderEvent.OrderId)
+            //    .SingleOrDefaultAsync()
+            //    ?? throw new Exception("Order not found.");
 
-                //_orderRepository.Delete(order);
-                //await _orderRepository.SaveChangesAsync();
+            //_orderRepository.Delete(order);
+            //await _orderRepository.SaveChangesAsync();
 
-                _logger.LogInformation("Compensating Done!");
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError($"Error Rollback Order: {ex.ToString()}");
-                throw;
-            }
+            _logger.LogInformation("Compensating Done!");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError($"Error Rollback Order: {ex.ToString()}");
+            throw;
         }
     }
 }
