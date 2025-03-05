@@ -1,7 +1,6 @@
-﻿namespace csharp_choreography_saga.OrderMicroservice.Features.CreateOrder
+﻿namespace csharp_choreography_saga.OrderMicroservice.Features.CreateOrder;
+
+public class CreateOrderResponse
 {
-    public class CreateOrderResponse
-    {
-        public Guid OrderId { get; set; }
-    }
+    public Guid OrderId { get; set; }
 }
