@@ -1,8 +1,7 @@
-﻿namespace csharp_choreography_saga.OrderMicroservice.Constants
+﻿namespace csharp_choreography_saga.OrderMicroservice.Constants;
+
+public enum OrderStatus
 {
-    public enum OrderStatus
-    {
-        Pending,
-        Received
-    }
+    Pending,
+    Received
 }
