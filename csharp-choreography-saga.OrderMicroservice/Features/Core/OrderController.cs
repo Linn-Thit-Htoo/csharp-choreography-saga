@@ -16,7 +16,10 @@ public class OrderController : ControllerBase
     }
 
     [HttpPost("CreateOrder")]
-    public async Task<IActionResult> CreateOrderAsync(CreateOrderCommand command, CancellationToken cs)
+    public async Task<IActionResult> CreateOrderAsync(
+        CreateOrderCommand command,
+        CancellationToken cs
+    )
     {
         var result = await _sender.Send(command, cs);
         return Ok(result);
