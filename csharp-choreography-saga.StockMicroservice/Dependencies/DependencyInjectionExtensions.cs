@@ -53,6 +53,7 @@ namespace csharp_choreography_saga.StockMicroservice.Dependencies
             builder.Services.AddScoped<IStockService, StockService>();
             builder.Services.AddHostedService<RabbitMQService>();
             builder.Services.AddSingleton<IBus, RabbitBus>();
+            builder.Services.AddHealthChecks();
 
             return services;
         }

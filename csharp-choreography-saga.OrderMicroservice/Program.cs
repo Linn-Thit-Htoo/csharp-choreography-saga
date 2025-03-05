@@ -27,8 +27,9 @@ namespace csharp_choreography_saga.OrderMicroservice
 
             app.UseHttpsRedirection();
 
-            app.UseAuthorization();
+            app.UseHealthChecks("/health");
 
+            app.UseAuthorization();
 
             app.MapControllers();
 
