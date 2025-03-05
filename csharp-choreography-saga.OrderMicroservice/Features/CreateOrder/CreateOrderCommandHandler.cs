@@ -5,7 +5,6 @@ using csharp_choreography_saga.OrderMicroservice.Persistence.Base;
 using csharp_choreography_saga.OrderMicroservice.Services.RabbitMQ;
 using csharp_choreography_saga.OrderMicroservice.Utils;
 using MediatR;
-using System.Data.SqlTypes;
 using System.Transactions;
 
 namespace csharp_choreography_saga.OrderMicroservice.Features.CreateOrder
