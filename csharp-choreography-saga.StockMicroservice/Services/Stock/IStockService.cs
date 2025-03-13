@@ -1,9 +1,8 @@
 ﻿using csharp_choreography_saga.StockMicroservice.Models;
 
-namespace csharp_choreography_saga.StockMicroservice.Services.Stock
+namespace csharp_choreography_saga.StockMicroservice.Services.Stock;
+
+public interface IStockService
 {
-    public interface IStockService
-    {
-        Task<bool> ReduceStockAsync(OrderCreatedEvent orderCreatedEvent);
-    }
+    Task<bool> ReduceStockAsync(OrderCreatedEvent orderCreatedEvent);
 }
