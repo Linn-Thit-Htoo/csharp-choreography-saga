@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace csharp_choreography_saga.StockMicroservice.Entities;
 
