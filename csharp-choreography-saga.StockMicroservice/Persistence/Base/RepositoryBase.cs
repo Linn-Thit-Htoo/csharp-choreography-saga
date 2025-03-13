@@ -1,11 +1,12 @@
-﻿using csharp_choreography_saga.StockMicroservice.Entities;
+﻿using System.Linq.Expressions;
+using csharp_choreography_saga.StockMicroservice.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
-using System.Linq.Expressions;
 
 namespace csharp_choreography_saga.StockMicroservice.Persistence.Base;
 
-public class RepositoryBase<T> : IRepositoryBase<T> where T : class
+public class RepositoryBase<T> : IRepositoryBase<T>
+    where T : class
 {
     internal readonly DbContext _context;
     internal readonly DbSet<T> _dbSet;
@@ -26,7 +27,11 @@ public class RepositoryBase<T> : IRepositoryBase<T> where T : class
         return _dbSet.Where(expression);
     }
 
-    public IQueryable<T> Query(Expression<Func<T, bool>> expression = null, Func<IQueryable<T>, IIncludableQueryable<T, object>> include = null, Func<IQueryable<T>, IOrderedQueryable<T>> order = null)
+    public IQueryable<T> Query(
+        Expression<Func<T, bool>> expression = null,
+        Func<IQueryable<T>, IIncludableQueryable<T, object>> include = null,
+        Func<IQueryable<T>, IOrderedQueryable<T>> order = null
+    )
     {
         IQueryable<T> query = _dbSet;
 
