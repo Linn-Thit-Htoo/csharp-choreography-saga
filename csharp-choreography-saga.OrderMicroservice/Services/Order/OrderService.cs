@@ -16,7 +16,12 @@ public class OrderService : IOrderService
     private readonly IRepositoryBase<TblOrder> _orderRepository;
     private readonly AppSetting _appSetting;
 
-    public OrderService(IOptions<AppSetting> options, AppDbContext appDbContext, ILogger<OrderService> logger, IRepositoryBase<TblOrder> orderRepository)
+    public OrderService(
+        IOptions<AppSetting> options,
+        AppDbContext appDbContext,
+        ILogger<OrderService> logger,
+        IRepositoryBase<TblOrder> orderRepository
+    )
     {
         _appSetting = options.Value;
         _appDbContext = appDbContext;
@@ -29,10 +34,11 @@ public class OrderService : IOrderService
         using var transaction = await _appDbContext.Database.BeginTransactionAsync();
         try
         {
-            var order = await _appDbContext.TblOrders
-    .Include(x => x.TblOrderDetails)
-    .SingleOrDefaultAsync(x => x.OrderId == compensateOrderEvent.OrderId)
-    ?? throw new Exception("Order not found.");
+            var order =
+                await _appDbContext
+                    .TblOrders.Include(x => x.TblOrderDetails)
+                    .SingleOrDefaultAsync(x => x.OrderId == compensateOrderEvent.OrderId)
+                ?? throw new Exception("Order not found.");
 
             foreach (var item in order.TblOrderDetails)
             {
@@ -60,10 +66,7 @@ public class OrderService : IOrderService
         try
         {
             string query = @"DELETE FROM ""Tbl_Order"" WHERE ""OrderId"" = @OrderId";
-            var parameters = new
-            {
-                compensateOrderEvent.OrderId
-            };
+            var parameters = new { compensateOrderEvent.OrderId };
             var db = new NpgsqlConnection(_appSetting.ConnectionStrings.DbConnection);
             int result = await db.ExecuteAsync(query, parameters);
 
