@@ -1,16 +1,15 @@
-﻿namespace csharp_choreography_saga.StockMicroservice.Models
-{
-    public class OrderCreatedEvent
-    {
-        public Guid OrderId { get; set; }
-        public List<OrderDetail> OrderDetails { get; set; }
-    }
+﻿namespace csharp_choreography_saga.StockMicroservice.Models;
 
-    public class OrderDetail
-    {
-        public Guid ProductId { get; set; }
-        public Guid InvoiceNo { get; set; }
-        public long TotalItems { get; set; }
-        public double SubTotal { get; set; }
-    }
+public class OrderCreatedEvent
+{
+    public Guid OrderId { get; set; }
+    public List<OrderDetail> OrderDetails { get; set; }
+}
+
+public class OrderDetail
+{
+    public Guid ProductId { get; set; }
+    public Guid InvoiceNo { get; set; }
+    public long TotalItems { get; set; }
+    public double SubTotal { get; set; }
 }
