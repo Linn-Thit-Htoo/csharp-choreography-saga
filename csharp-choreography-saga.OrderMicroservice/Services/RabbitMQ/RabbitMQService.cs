@@ -2,7 +2,6 @@
 using csharp_choreography_saga.OrderMicroservice.Configurations;
 using csharp_choreography_saga.OrderMicroservice.Models;
 using csharp_choreography_saga.OrderMicroservice.Services.Order;
-using Microsoft.AspNetCore.Connections;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using RabbitMQ.Client;
