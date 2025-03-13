@@ -1,4 +1,3 @@
-
 using csharp_choreography_saga.StockMicroservice.Dependencies;
 
 namespace csharp_choreography_saga.StockMicroservice
