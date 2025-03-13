@@ -23,9 +23,12 @@ public class Program
 
         app.UseHttpsRedirection();
 
-        app.UseAuthorization();
+            app.UseHealthChecks("/health");
 
-        app.MapControllers();
+            app.UseAuthorization();
+
+
+            app.MapControllers();
 
         app.Run();
     }

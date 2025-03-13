@@ -66,6 +66,7 @@ public static class DependencyInjectionExtensions
         builder.Services.AddHostedService<RabbitMQService>();
         builder.Services.AddSingleton<IBus, RabbitBus>();
         builder.Services.AddScoped<IOrderService, OrderService>();
+        builder.Services.AddHealthChecks();
 
         return services;
     }

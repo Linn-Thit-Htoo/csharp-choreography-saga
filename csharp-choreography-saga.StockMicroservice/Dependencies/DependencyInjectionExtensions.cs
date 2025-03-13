@@ -57,10 +57,11 @@ public static class DependencyInjectionExtensions
             }
         );
 
-        builder.Services.AddScoped(typeof(IRepositoryBase<>), typeof(RepositoryBase<>));
-        builder.Services.AddScoped<IStockService, StockService>();
-        builder.Services.AddHostedService<RabbitMQService>();
-        builder.Services.AddSingleton<IBus, RabbitBus>();
+            builder.Services.AddScoped(typeof(IRepositoryBase<>), typeof(RepositoryBase<>));
+            builder.Services.AddScoped<IStockService, StockService>();
+            builder.Services.AddHostedService<RabbitMQService>();
+            builder.Services.AddSingleton<IBus, RabbitBus>();
+            builder.Services.AddHealthChecks();
 
         return services;
     }
