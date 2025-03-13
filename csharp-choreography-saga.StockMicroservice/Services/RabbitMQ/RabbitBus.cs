@@ -1,7 +1,7 @@
-﻿using csharp_choreography_saga.StockMicroservice.Configurations;
+﻿using System.Text;
+using csharp_choreography_saga.StockMicroservice.Configurations;
 using Newtonsoft.Json;
 using RabbitMQ.Client;
-using System.Text;
 
 namespace csharp_choreography_saga.StockMicroservice.Services.RabbitMQ;
 
