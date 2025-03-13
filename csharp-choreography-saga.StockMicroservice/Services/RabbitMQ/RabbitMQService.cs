@@ -1,4 +1,5 @@
-﻿using csharp_choreography_saga.StockMicroservice.Configurations;
+﻿using System.Text;
+using csharp_choreography_saga.StockMicroservice.Configurations;
 using csharp_choreography_saga.StockMicroservice.Models;
 using csharp_choreography_saga.StockMicroservice.Services.Stock;
 using Microsoft.AspNetCore.Connections;
@@ -6,7 +7,6 @@ using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
-using System.Text;
 
 namespace csharp_choreography_saga.StockMicroservice.Services.RabbitMQ;
 
@@ -16,14 +16,18 @@ public class RabbitMQService : BackgroundService
     private readonly ILogger<RabbitMQService> _logger;
     private readonly IServiceScopeFactory _scopeFactory;
 
-    public RabbitMQService(ILogger<RabbitMQService> logger, IServiceScopeFactory scopeFactory, IOptions<AppSetting> options)
+    public RabbitMQService(
+        ILogger<RabbitMQService> logger,
+        IServiceScopeFactory scopeFactory,
+        IOptions<AppSetting> options
+    )
     {
         _logger = logger;
         _scopeFactory = scopeFactory;
         _appSetting = options.Value;
     }
 
-    protected async override Task ExecuteAsync(CancellationToken stoppingToken)
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         IConnection connection = CreateConnection();
         var channel = connection.CreateModel();
@@ -47,13 +51,21 @@ public class RabbitMQService : BackgroundService
                     var stockService = scope.ServiceProvider.GetRequiredService<IStockService>();
                     var bus = scope.ServiceProvider.GetRequiredService<IBus>();
 
-                    bool isStockReductionSuccessful = await stockService.ReduceStockAsync(requestModel!);
+                    bool isStockReductionSuccessful = await stockService.ReduceStockAsync(
+                        requestModel!
+                    );
 
                     if (!isStockReductionSuccessful)
                     {
                         // publish to compensate the order
-                        CompensateOrderEvent compensateOrderEvent = new() { OrderId = requestModel!.OrderId };
-                        bus.Send("DirectExchange", "OrderQueue", "orderfaildirect",compensateOrderEvent);
+                        CompensateOrderEvent compensateOrderEvent =
+                            new() { OrderId = requestModel!.OrderId };
+                        bus.Send(
+                            "DirectExchange",
+                            "OrderQueue",
+                            "orderfaildirect",
+                            compensateOrderEvent
+                        );
                     }
                 }
 
