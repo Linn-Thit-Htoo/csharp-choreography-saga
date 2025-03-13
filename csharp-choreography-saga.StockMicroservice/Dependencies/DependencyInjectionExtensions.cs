@@ -11,10 +11,18 @@ namespace csharp_choreography_saga.StockMicroservice.Dependencies;
 
 public static class DependencyInjectionExtensions
 {
-    public static IServiceCollection AddDependencie(this IServiceCollection services, WebApplicationBuilder builder)
+    public static IServiceCollection AddDependencie(
+        this IServiceCollection services,
+        WebApplicationBuilder builder
+    )
     {
-        builder.Configuration.SetBasePath(builder.Environment.ContentRootPath)
-            .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: false, reloadOnChange: true)
+        builder
+            .Configuration.SetBasePath(builder.Environment.ContentRootPath)
+            .AddJsonFile(
+                $"appsettings.{builder.Environment.EnvironmentName}.json",
+                optional: false,
+                reloadOnChange: true
+            )
             .AddEnvironmentVariables();
 
         builder.Services.Configure<AppSetting>(builder.Configuration);
@@ -31,9 +39,7 @@ public static class DependencyInjectionExtensions
                         .ToList();
 
                     var errorMessage = string.Join(" ", errors);
-                    var result = Result<object>.Fail(
-                        errorMessage
-                    );
+                    var result = Result<object>.Fail(errorMessage);
 
                     return new OkObjectResult(result);
                 };
@@ -43,11 +49,13 @@ public static class DependencyInjectionExtensions
                 opt.JsonSerializerOptions.PropertyNamingPolicy = null;
             });
 
-        builder.Services.AddDbContext<AppDbContext>((serviceProvider, opt) =>
-        {
-            opt.UseNpgsql(builder.Configuration.GetConnectionString("DbConnection"));
-            opt.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
-        });
+        builder.Services.AddDbContext<AppDbContext>(
+            (serviceProvider, opt) =>
+            {
+                opt.UseNpgsql(builder.Configuration.GetConnectionString("DbConnection"));
+                opt.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
+            }
+        );
 
         builder.Services.AddScoped(typeof(IRepositoryBase<>), typeof(RepositoryBase<>));
         builder.Services.AddScoped<IStockService, StockService>();
