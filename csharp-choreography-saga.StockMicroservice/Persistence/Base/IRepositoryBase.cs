@@ -1,5 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Query;
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
+using Microsoft.EntityFrameworkCore.Query;
 
 namespace csharp_choreography_saga.StockMicroservice.Persistence.Base;
 
